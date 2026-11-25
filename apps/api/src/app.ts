@@ -26,6 +26,7 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
 
   const app = Fastify({
     logger: options.logger ?? env.NODE_ENV === "development",
+    trustProxy: true,
     bodyLimit: 512 * 1024, // 512KB max JSON payload (strict replay cap protection)
   });
 
@@ -34,8 +35,20 @@ export async function buildApp(options: BuildAppOptions = {}): Promise<FastifyIn
     crossOriginResourcePolicy: { policy: "cross-origin" },
   });
 
+  const allowedOrigins = env.CORS_ORIGIN.split(",").map((o) => o.trim()).filter(Boolean);
   await app.register(cors, {
-    origin: env.CORS_ORIGIN.split(",").map((o) => o.trim()),
+    origin: (origin, cb) => {
+      if (!origin) return cb(null, true);
+      if (
+        allowedOrigins.includes(origin) ||
+        (process.env.VERCEL_URL && origin === `https://${process.env.VERCEL_URL}`) ||
+        (process.env.VERCEL_PROJECT_PRODUCTION_URL &&
+          origin === `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`)
+      ) {
+        return cb(null, true);
+      }
+      return cb(null, false);
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "X-CSRF-Token"],

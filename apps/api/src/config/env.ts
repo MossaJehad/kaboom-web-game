@@ -29,7 +29,20 @@ let cachedEnv: AppEnv | null = null;
 
 export function getEnv(): AppEnv {
   if (!cachedEnv) {
-    cachedEnv = envSchema.parse(process.env);
+    const raw = { ...process.env };
+    const isVercel = raw.VERCEL === "1" || Boolean(raw.VERCEL_URL);
+    const vercelHost = raw.VERCEL_PROJECT_PRODUCTION_URL || raw.VERCEL_URL;
+    if (isVercel && vercelHost) {
+      const vercelOrigin = `https://${vercelHost}`;
+      if (!raw.APP_URL) raw.APP_URL = vercelOrigin;
+      if (!raw.CORS_ORIGIN) {
+        raw.CORS_ORIGIN = raw.VERCEL_URL && raw.VERCEL_URL !== vercelHost
+          ? `${vercelOrigin},https://${raw.VERCEL_URL}`
+          : vercelOrigin;
+      }
+      if (raw.COOKIE_SECURE === undefined) raw.COOKIE_SECURE = "true";
+    }
+    cachedEnv = envSchema.parse(raw);
   }
   return cachedEnv;
 }

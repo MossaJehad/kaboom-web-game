@@ -11,6 +11,28 @@ Copy `.env.example` to `.env` and configure:
 - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` — Optional SMTP relay (e.g., Brevo/Resend/Mailgun free tier or self-hosted SMTP). When omitted in development, emails are written to the local dev outbox.
 - `ADMIN_EMAIL`, `ADMIN_USERNAME`, `ADMIN_PASSWORD` — Initial administrator seed credentials.
 
+## One-Project Vercel Deployment (Frontend + Fastify API)
+
+SKYHOP is pre-configured via `vercel.json` and `api/index.mjs` to deploy both the React/Vite frontend and the Fastify API together on the same Vercel domain (ensuring same-origin HttpOnly auth & CSRF cookies work cleanly).
+
+### 1. Provision a Free PostgreSQL Database
+Create a free PostgreSQL database on **Neon** (recommended — also available directly in the Vercel Marketplace under *Storage -> Create Database -> Neon*), **Supabase**, or **Prisma Postgres**, and copy its `DATABASE_URL`.
+
+### 2. Configure Vercel Environment Variables
+In Vercel Project Settings -> Environment Variables (Production & Preview), add:
+- `DATABASE_URL` = `postgresql://...` (your managed PostgreSQL connection string)
+- `SESSION_SECRET` = a random 64-character secret (e.g. `openssl rand -hex 32`)
+- `ADMIN_EMAIL` = your admin email
+- `ADMIN_USERNAME` = your admin username
+- `ADMIN_PASSWORD` = a strong admin password
+- Optional SMTP vars (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`) for real verification/reset emails
+
+> `APP_URL`, `CORS_ORIGIN`, and `COOKIE_SECURE=true` are automatically derived from Vercel's `VERCEL_PROJECT_PRODUCTION_URL` / `VERCEL_URL` unless you explicitly override them (e.g., for a custom domain).
+
+### 3. Deploy
+- **Via GitHub (Recommended)**: Push this repo to GitHub and import it at [vercel.com/new](https://vercel.com/new). Vercel automatically reads `vercel.json`, builds all workspaces, runs `prisma migrate deploy` + idempotent `db:seed`, serves `apps/web/dist`, and mounts `/api/*` via `api/index.mjs`.
+- **Via CLI**: Run `npx vercel` (then `npx vercel --prod` once env vars are configured).
+
 ## Self-Hosted Docker Compose Deployment
 
 ```bash
