@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: skyhop-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: skyhop
+      POSTGRES_PASSWORD: skyhop_dev_password
+      POSTGRES_DB: skyhop
+    ports:
+      - "5432:5432"
+    volumes:
+      - skyhop_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U skyhop -d skyhop"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: skyhop-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      HOST: 0.0.0.0
+      DATABASE_URL: postgresql://skyhop:skyhop_dev_password@postgres:5432/skyhop?schema=public
+      CORS_ORIGIN: http://localhost:8080
+      APP_URL: http://localhost:8080
+      SESSION_SECRET: ${SESSION_SECRET:-change-this-production-session-secret-64-chars-minimum}
+      COOKIE_SECURE: "false"
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@skyhop.local}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-skyadmin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-ChangeMeAdmin123!}
+    ports:
+      - "3001:3001"
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: skyhop-web
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+
+volumes:
+  skyhop_pgdata:

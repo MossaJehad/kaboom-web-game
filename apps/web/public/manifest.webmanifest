@@ -1,0 +1,24 @@
+{
+  "name": "SKYHOP Arcade",
+  "short_name": "SKYHOP",
+  "description": "Retro pixel-art endless arcade flight game with verified leaderboards, 15 bird skins, and 12 playable scenes.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#121629",
+  "theme_color": "#14192d",
+  "icons": [
+    {
+      "src": "/assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

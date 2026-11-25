@@ -1,0 +1,168 @@
+@import "tailwindcss";
+
+:root {
+  --arcade-bg: #121629;
+  --arcade-panel: #1c2340;
+  --arcade-panel-dark: #141930;
+  --arcade-border: #0a0d1a;
+  --arcade-highlight: #3a4678;
+  --arcade-cream: #fef8e6;
+  --arcade-muted: #b8c2dc;
+  --arcade-gold: #f5b935;
+  --arcade-gold-dark: #b4690e;
+  --arcade-green: #3ac463;
+  --arcade-green-dark: #1e7a3b;
+  --arcade-red: #e84545;
+  --arcade-red-dark: #941f27;
+  --arcade-sky: #38a3f1;
+  --font-display: "Press Start 2P", monospace;
+  --font-ui: "Silkscreen", monospace;
+  --font-body: "VT323", monospace;
+}
+
+.high-contrast {
+  --arcade-bg: #000000;
+  --arcade-panel: #0a0a0a;
+  --arcade-panel-dark: #000000;
+  --arcade-border: #ffffff;
+  --arcade-highlight: #ffff00;
+  --arcade-cream: #ffffff;
+  --arcade-muted: #e5e5e5;
+  --arcade-gold: #ffee00;
+}
+
+html,
+body {
+  background-color: var(--arcade-bg);
+  color: var(--arcade-cream);
+  font-family: var(--font-ui), monospace;
+  overscroll-behavior: none;
+}
+
+.font-arcade-title {
+  font-family: var(--font-display), monospace;
+  letter-spacing: 0.03em;
+}
+
+.font-arcade-ui {
+  font-family: var(--font-ui), monospace;
+}
+
+.font-arcade-mono {
+  font-family: var(--font-body), monospace;
+}
+
+.pixel-art {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Crisp retro cabinet borders without generic SaaS blur/rounded bloat */
+.pixel-panel {
+  background-color: var(--arcade-panel);
+  border: 3px solid var(--arcade-border);
+  box-shadow:
+    inset 0 3px 0 0 var(--arcade-highlight),
+    inset 0 -3px 0 0 rgba(0, 0, 0, 0.45),
+    4px 4px 0 0 rgba(0, 0, 0, 0.55);
+}
+
+.pixel-panel-inset {
+  background-color: var(--arcade-panel-dark);
+  border: 2px solid var(--arcade-border);
+  box-shadow: inset 0 2px 0 0 rgba(0, 0, 0, 0.55);
+}
+
+.pixel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-ui), monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: 3px solid var(--arcade-border);
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 60ms steps(2);
+  box-shadow:
+    inset 0 3px 0 0 rgba(255, 255, 255, 0.25),
+    inset 0 -3px 0 0 rgba(0, 0, 0, 0.35),
+    3px 3px 0 0 rgba(0, 0, 0, 0.55);
+}
+
+.pixel-btn:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.pixel-btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow:
+    inset 0 2px 0 0 rgba(0, 0, 0, 0.3),
+    1px 1px 0 0 rgba(0, 0, 0, 0.55);
+}
+
+.pixel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pixel-btn-primary {
+  background-color: var(--arcade-gold);
+  color: #121629;
+}
+
+.pixel-btn-green {
+  background-color: var(--arcade-green);
+  color: #0b1e11;
+}
+
+.pixel-btn-red {
+  background-color: var(--arcade-red);
+  color: #ffffff;
+}
+
+.pixel-btn-sky {
+  background-color: var(--arcade-sky);
+  color: #0b1628;
+}
+
+.pixel-btn-secondary {
+  background-color: #2b355c;
+  color: var(--arcade-cream);
+}
+
+.pixel-input {
+  background-color: var(--arcade-panel-dark);
+  color: var(--arcade-cream);
+  border: 3px solid var(--arcade-border);
+  box-shadow: inset 0 2px 0 0 rgba(0, 0, 0, 0.5);
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-ui), monospace;
+  width: 100%;
+}
+
+.pixel-input:focus,
+.pixel-btn:focus-visible,
+a:focus-visible,
+button:focus-visible,
+select:focus-visible {
+  outline: 3px solid #f5b935;
+  outline-offset: 2px;
+}
+
+.reduced-motion *,
+.reduced-motion *::before,
+.reduced-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+
+.safe-area-pad {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
